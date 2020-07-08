@@ -3,11 +3,10 @@ import re
 
 import discord
 
-from disco_dan import settings
-from disco_dan.controller import Controller
+from disco_dan import settings, controller, exceptions
 
 client = discord.Client()
-controller = Controller(client)
+controller = controller.Controller(client)
 
 
 @client.event
@@ -18,10 +17,11 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
-    """ Respond to a message-
-    "disco dan, play 'nyan cat' in talkie" -> play "nyan cat" in voice channel "talkie"
-    """
-    controller.handle_message(message)
+    """ Respond to a message """
+    try:
+        controller.handle_message(message)
+    except exceptions.DiscoDanError as e:
+        controller.report_error(e)
 
 
 def start_loop():
