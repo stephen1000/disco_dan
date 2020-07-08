@@ -6,7 +6,7 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from pytube import YouTube
 
-from disco_dan import settings
+from disco_dan import settings, exceptions
 
 
 async def search(q, max_results=50, order="relevance", start_at="0s"):
@@ -32,19 +32,18 @@ async def search(q, max_results=50, order="relevance", start_at="0s"):
     return youtube_url
 
 
-async def download_audio(youtube_url: str, audio_format="mp4") -> None:
+async def get_audio(youtube_url: str, audio_format="mp4") -> None:
     """ Download a url from Youtube """
     youtube_video = YouTube(youtube_url)
     audio = youtube_video.streams.get_audio_only(audio_format)
     return audio
 
 
-async def fetch_audio(q):
-    url = await search(q)
-    audio = await download_audio(url)
+async def load_audio(q):
+    try:
+        url = await search(q)
+        audio = await get_audio(url)
+    except KeyError as e:
+        raise exceptions.YoutubeError('Unable to load video for query "%s"', q)
     return audio
-
-
-loop = asyncio.new_event_loop()
-loop.run_until_complete(fetch_audio("nyan cat"))
 

@@ -19,9 +19,9 @@ async def on_ready():
 async def on_message(message):
     """ Respond to a message """
     try:
-        controller.handle_message(message)
+        await controller.handle_message(message)
     except exceptions.DiscoDanError as e:
-        controller.report_error(e)
+        await controller.report_error(e, message.channel)
 
 
 def start_loop():
