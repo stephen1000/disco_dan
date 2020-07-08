@@ -22,7 +22,12 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="",
     package_dir={"": "src"},
-    install_requires=["python-dotenv>=0.13.0",],
+    install_requires=[
+        "python-dotenv>=0.13.0",
+        "discord.py>=1.3.3",
+        "google-api-python-client>=1.9.3",
+        "pytube3>=9.6.4"
+    ],
     extras_require={"dev": test_req + dev_req, "test": test_req,},
     packages=setuptools.find_packages("src"),
     classifiers=[
