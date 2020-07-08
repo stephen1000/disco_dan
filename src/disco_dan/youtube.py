@@ -44,6 +44,8 @@ async def load_audio(q):
         url = await search(q)
         audio = await get_audio(url)
     except KeyError as e:
-        raise exceptions.YoutubeError('Unable to load video for query "%s"', q)
+        raise exceptions.YoutubeError(
+            'Unable to load video for query "%s":\n%s', (q, repr(e))
+        )
     return audio
 

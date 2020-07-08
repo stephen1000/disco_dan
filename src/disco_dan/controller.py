@@ -62,7 +62,7 @@ class Controller(object):
 
         try:
             args = self.parser.parse_args(command_text.split())
-        except SystemExit as e:
+        except SystemExit:
             raise exceptions.MessageParsingErrror("Disco Dan's head hurts :(")
 
         if args.command == "play":
