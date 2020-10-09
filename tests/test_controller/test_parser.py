@@ -1,4 +1,4 @@
-""" Tests for the bot controller """
+""" Tests for the bot controller parser """
 
 import pytest
 from disco_dan.controller import Controller
@@ -68,3 +68,5 @@ def test_parser_stop(parser):
     """ Asert the stop parser behaves properly """
     args = parser.parse_args(["stop"])
     assert args.command == "stop"
+
+
