@@ -4,12 +4,13 @@ with open("readme.md", "r") as f:
     long_description = f.read()
 
 dev_req = [
-    "black>=19.10b0",
-    "pylint>=2.5.3",
+    "black==19.10b0",
+    "pylint==2.5.3",
 ]
 
 test_req = [
-    "pytest>=5.4.3",
+    "pytest==5.4.3",
+    "pytest-asyncio==0.14.0",
 ]
 
 setuptools.setup(
@@ -28,10 +29,13 @@ setuptools.setup(
         "python-dotenv==0.13.0",
         "discord.py==1.5.0",
         "google-api-python-client==1.9.3",
-        "pytube3==9.6.4",
+        "pytubeX==0.1.2",
         "PyNaCl==1.4.0",
     ],
-    extras_require={"dev": test_req + dev_req, "test": test_req,},
+    extras_require={
+        "dev": test_req + dev_req,
+        "test": test_req,
+    },
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
