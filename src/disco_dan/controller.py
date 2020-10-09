@@ -54,7 +54,7 @@ class Controller(object):
 
     async def handle_message(self, message: discord.Message) -> None:
         """ Parses a message and instructs the controller to act accordingly """
-        command_text = await self.get_bot_command_text(message)
+        command_text = await self.get_bot_command_text(message.content)
         if command_text is None:
             return
 
@@ -88,10 +88,10 @@ class Controller(object):
             )
             await self.stop(guild=message.guild)
 
-    async def get_bot_command_text(self, message: discord.Message) -> Optional[str]:
+    async def get_bot_command_text(self, message: str) -> Optional[str]:
         """ `True` if message is speaking to Disco Dan """
-        if message.content.lower().startswith(self.START_WORD.lower()):
-            return message.content[len(self.START_WORD) :].strip()
+        if message.lower().startswith(self.START_WORD.lower()):
+            return message[len(self.START_WORD) :].strip()
         return None
 
     async def find_guild_channel(
