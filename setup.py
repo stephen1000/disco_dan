@@ -14,7 +14,7 @@ test_req = [
 
 setuptools.setup(
     name="disco_dan",
-    version="0.0.1",
+    version="0.0.2",
     author="Stephen Lowery",
     author_email="author@example.com",
     description="Code used for a discord bot",
@@ -26,7 +26,7 @@ setuptools.setup(
     entry_points={"console_scripts": ["disco_dan = disco_dan.bot:start_loop"]},
     install_requires=[
         "python-dotenv==0.13.0",
-        "discord.py==1.3.3",
+        "discord.py==1.5.0",
         "google-api-python-client==1.9.3",
         "pytube3==9.6.4",
         "PyNaCl==1.4.0",
