@@ -8,10 +8,7 @@ dev_req = [
     "pylint==2.5.3",
 ]
 
-test_req = [
-    "pytest==5.4.3",
-    "pytest-asyncio==0.14.0",
-]
+test_req = ["pytest==5.4.3", "pytest-asyncio==0.14.0", "pytest-cov==2.10.1"]
 
 setuptools.setup(
     name="disco_dan",
@@ -32,10 +29,7 @@ setuptools.setup(
         "pytubeX==0.1.2",
         "PyNaCl==1.4.0",
     ],
-    extras_require={
-        "dev": test_req + dev_req,
-        "test": test_req,
-    },
+    extras_require={"dev": test_req + dev_req, "test": test_req,},
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
