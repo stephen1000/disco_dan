@@ -30,14 +30,12 @@ class Controller(object):
         )
         play_parser.add_argument(
             "query",
-            type=str,
+            type=list,
             nargs=argparse.REMAINDER,
             help="Text used to find a video on youtube",
         )
         play_parser.add_argument(
-            "--channel",
-            type=str,
-            help=f'Channel to play audio in. Default: "{settings.DEFAULT_VOICE_CHANNEL}".',
+            "--channel", type=str, help=f"Channel to play audio in.",
         )
         play_parser.set_defaults(command="play")
 
@@ -141,7 +139,7 @@ class Controller(object):
         )
 
         if voice_connection.is_playing:
-            self.stop(guild)
+            await self.stop(guild)
 
         audio = await youtube.load_audio(query)
         audio_path = audio.download(
@@ -153,25 +151,25 @@ class Controller(object):
         player = discord.FFmpegPCMAudio(
             executable=settings.FFMPEG_EXECUTABLE, source=audio_path
         )
-        voice_connection.play(player)
+        await voice_connection.play(player)
 
     async def resume(self, guild: discord.Guild):
         """ Resume audio playback """
         voice_connection = await self.get_voice_connection(guild)
         if voice_connection is not None:
-            voice_connection.resume()
+            await voice_connection.resume()
 
     async def pause(self, guild: discord.Guild):
         """ Pause the current audio """
         voice_connection = await self.get_voice_connection(guild)
         if voice_connection is not None:
-            voice_connection.pause()
+            await voice_connection.pause()
 
     async def stop(self, guild: discord.Guild):
         """ Stop the current audio """
         voice_connection = await self.get_voice_connection(guild)
         if voice_connection is not None:
-            voice_connection.stop()
+            await voice_connection.stop()
 
     async def report_error(
         self, error: exceptions.DiscoDanError, channel: discord.TextChannel
@@ -185,5 +183,5 @@ class Controller(object):
             error_message = error.args[0]
         else:
             error_message = error.args[0] % error.args[1:]
-            
-        await channel.send(f'I ran into an error :(-\n {type(error)} {error_message}')
+        await channel.send(f"I ran into an error :(-\n {type(error)} {error_message}")
+
