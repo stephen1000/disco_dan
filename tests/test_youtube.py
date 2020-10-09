@@ -39,3 +39,5 @@ async def test_get_audio(known_video):
 @pytest.mark.asyncio
 async def test_load_audio(known_video):
     """ Assert load_aduio returns audio """
+    audio = await youtube.load_audio(known_video)
+    assert audio

@@ -34,6 +34,7 @@ async def search(q, max_results=50, order="relevance", start_at="0s"):
 
 async def get_audio(youtube_url: str, audio_format="mp4") -> None:
     """ Download a url from Youtube """
+    # pylint: disable=no-member
     youtube_video = YouTube(youtube_url)
     audio = youtube_video.streams.get_audio_only(audio_format)
     return audio
