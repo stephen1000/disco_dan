@@ -22,6 +22,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="",
     package_dir={"": "src"},
+    entry_points={"console_scripts": ["disco_dan = disco_dan.bot:start_loop"]},
     install_requires=[
         "python-dotenv>=0.13.0",
         "discord.py>=1.3.3",
