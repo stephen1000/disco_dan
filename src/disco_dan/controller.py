@@ -30,7 +30,7 @@ class Controller(object):
         )
         play_parser.add_argument(
             "query",
-            type=list,
+            type=str,
             nargs=argparse.REMAINDER,
             help="Text used to find a video on youtube",
         )
