@@ -6,8 +6,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-AUDIO_BUFFER_PATH = os.getenv("AUDIO_BUFFER")
-AUDIO_BUFFER_NAME = os.getenv("AUDIO_BUFFER")
+AUDIO_BUFFER_PATH = os.getenv("AUDIO_BUFFER_PATH")
+AUDIO_BUFFER_NAME = os.getenv("AUDIO_BUFFER_NAME")
 FFMPEG_EXECUTABLE = os.getenv("FFMPEG_EXECUTABLE")
 
 DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
