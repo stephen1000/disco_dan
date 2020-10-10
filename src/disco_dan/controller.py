@@ -1,11 +1,13 @@
 """ Disco Dan's Brain """
 import argparse
+import sys
+import traceback
 from io import BytesIO
 from typing import Optional
 
 import discord
 
-from disco_dan import settings, youtube, exceptions
+from disco_dan import exceptions, settings, youtube, logger
 
 
 class Controller(object):
@@ -57,6 +59,7 @@ class Controller(object):
         command_text = await self.get_bot_command_text(message.content)
         if command_text is None:
             return
+        logger.info("processing command text: %s", command_text)
 
         try:
             args = self.parser.parse_args(command_text.split())
@@ -68,7 +71,13 @@ class Controller(object):
             await message.channel.send(
                 f'Playing "{query}" (requested by {message.author.mention})!'
             )
-            await self.play(guild=message.guild, query=query, channel_name=args.channel)
+            voice_channel = args.channel
+            if voice_channel is None:
+                if message.author.voice:
+                    voice_channel = message.author.voice.channel.name
+                else:
+                    raise exceptions.VoiceNotChannelFound("No voice channel was specified, and the requestor is not in a voice channel.")
+            await self.play(guild=message.guild, query=query, channel_name=voice_channel)
 
         elif args.command == "pause":
             await message.channel.send(
@@ -151,37 +160,32 @@ class Controller(object):
         player = discord.FFmpegPCMAudio(
             executable=settings.FFMPEG_EXECUTABLE, source=audio_path
         )
-        await voice_connection.play(player)
+        return voice_connection.play(player)
 
     async def resume(self, guild: discord.Guild):
         """ Resume audio playback """
         voice_connection = await self.get_voice_connection(guild)
         if voice_connection is not None:
-            await voice_connection.resume()
+            return voice_connection.resume()
 
     async def pause(self, guild: discord.Guild):
         """ Pause the current audio """
         voice_connection = await self.get_voice_connection(guild)
         if voice_connection is not None:
-            await voice_connection.pause()
+            return voice_connection.pause()
 
     async def stop(self, guild: discord.Guild):
         """ Stop the current audio """
         voice_connection = await self.get_voice_connection(guild)
         if voice_connection is not None:
-            await voice_connection.stop()
+            return voice_connection.stop()
 
     async def report_error(
         self, error: exceptions.DiscoDanError, channel: discord.TextChannel
     ):
         """ Inform the user that something went wrong """
-        self.stop(channel.guild)
-        print(repr(error))
-        if len(error.args) == 0:
-            error_message = error.__doc__
-        elif len(error.args) == 1:
-            error_message = error.args[0]
-        else:
-            error_message = error.args[0] % error.args[1:]
-        await channel.send(f"I ran into an error :(-\n {type(error)} {error_message}")
+        await self.stop(channel.guild)
+        error_text = traceback.format_exc()
+        logger.info(error_text)
+        await channel.send(f"I ran into an error: \n{type(error).__name__}: {error}")
 
