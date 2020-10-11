@@ -9,7 +9,26 @@ from pytube import YouTube
 from disco_dan import settings, exceptions
 
 
-async def search(q, max_results=50, order="relevance", start_at="0s"):
+class YoutubeResult(object):
+    """ A video id and matching url """
+
+    def __init__(self, query: str, youtube_id: str, start_at: str = "0s"):
+        self.query = query
+        self.youtube_id = youtube_id
+        self.start_at = start_at
+
+    @property
+    def url(self):
+        return f"https://www.youtube.com/watch?v={self.youtube_id}&t={self.start_at}"
+
+    def __str__(self):
+        return self.url
+
+    def __repr__(self):
+        return f'<YoutubeResult({self.query}, {self.youtube_id}, {self.start_at})>'
+
+
+async def search(q, max_results=5, order="relevance", start_at="0s"):
     """ Search youtube for `q` & return first url by `order`, staring at time `start_at` """
     # pylint: disable=no-member
 
@@ -27,9 +46,8 @@ async def search(q, max_results=50, order="relevance", start_at="0s"):
     else:
         video_id = None
 
-    youtube_url = f"https://www.youtube.com/watch?v={video_id}&t={start_at}"
-
-    return youtube_url
+    result = YoutubeResult(q, video_id, start_at=start_at)
+    return result
 
 
 async def get_audio(youtube_url: str, audio_format="mp4") -> None:
@@ -42,11 +60,13 @@ async def get_audio(youtube_url: str, audio_format="mp4") -> None:
 
 async def load_audio(q):
     try:
-        url = await search(q)
-        audio = await get_audio(url)
+        result = await search(q)
+        audio = await get_audio(result.url)
     except KeyError as e:
         raise exceptions.YoutubeError(
-            'Unable to load video for query "%s":\n%s', q, str(e) + ','.join(str(arg) for arg in e.args)
+            'Unable to load video for query "%s":\n%s',
+            q,
+            str(e) + ",".join(str(arg) for arg in e.args),
         )
     return audio
 

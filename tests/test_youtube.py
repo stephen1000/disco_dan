@@ -20,18 +20,18 @@ def known_video(request):
 @pytest.mark.asyncio
 async def test_search(known_video):
     """ Assert search finds a known video """
-    url = await youtube.search(known_video)
-    assert url
-    assert isinstance(url, str)
-    assert not url.endswith("&t=")
-    assert url.startswith("https://www.youtube.com/watch?v=")
+    result = await youtube.search(known_video)
+    assert result.url
+    assert isinstance(result.url, str)
+    assert not result.url.endswith("&t=")
+    assert result.url.startswith("https://www.youtube.com/watch?v=")
 
 
 @pytest.mark.asyncio
 async def test_get_audio(known_video):
     """ Assert get_audio retrieves some audio for a known video """
-    url = await youtube.search(known_video)
-    audio = await youtube.get_audio(url)
+    result = await youtube.search(known_video)
+    audio = await youtube.get_audio(result.url)
     assert audio
 
 
