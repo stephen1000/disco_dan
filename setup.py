@@ -21,13 +21,14 @@ setuptools.setup(
     url="",
     package_dir={"": "src"},
     packages=setuptools.find_packages("src"),
-    entry_points={"console_scripts": ["disco_dan = disco_dan.bot:start_loop"]},
+    entry_points={"console_scripts": ["disco_dan = disco_dan.cli:handle"]},
     install_requires=[
         "python-dotenv==0.13.0",
         "discord.py==1.5.0",
         "google-api-python-client==1.9.3",
         "pytubeX==0.1.2",
         "PyNaCl==1.4.0",
+        "SQLAlchemy==1.3.19",
     ],
     extras_require={"dev": test_req + dev_req, "test": test_req,},
     classifiers=[
