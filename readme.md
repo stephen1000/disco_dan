@@ -1,24 +1,22 @@
 # Disco Dan
-A bot for streaming [YouTube](youtube.com) videos to a [Discord](discord.gg) channel.
+A bot for streaming audio from [YouTube](youtube.com) videos to a [Discord](discord.gg) channel.
 
 # Installation
-Get the code for this repo and move to the project root:
-``` shell
-git clone <https or ssh url>
-cd disco_dan
-```
-
-Create a virtual environment for the application in the project root with [virtualenv](https://virtualenv.pypa.io/en/stable/):
+Create a virtual environment for the application with [virtualenv](https://virtualenv.pypa.io/en/stable/):
 ``` shell
 virtualenv env
 ```
 
 Install the bot & dependencies:
 ``` shell
-pip install .
+# ssh
+pip install git+ssh://git@github.com/stephen1000/disco_dan@master
+
+# https
+pip install git+https://github.com/stephen1000/disco_dan@master
 ```
 
-More ways to install are incoming.
+More ways to install (direct pip package) are incoming.
 
 # Configuration
 Settings are managed with environment variables, which can be set for convenience w/ [python-dotenv](https://pypi.org/project/python-dotenv/).
@@ -36,7 +34,7 @@ To connect your bot to a server, you can use the OAuth2 tab to generate an invit
 To register for the Google/Youtube API, follow [this guide](https://developers.google.com/youtube/registering_an_application). Provide that token as `YOUTUBE_TOKEN` in the environment directly or through `.env`.
 
 # Usage
-Presently, the only way to run Disco Dan is to start a python process:
+Initialize the cacheing database 
 ```
 # Windows
 env\Scripts\activate
@@ -50,11 +48,7 @@ python src/disco_dan/bot.py
 System specific instructions can be found online for running python processes in the background and/or as a service.
 
 # Roadmap
-- Tests (pytest)
 - Logging
-- CLI
-- Better installation
-- Pi service config via systemd
 - Containerization
 
 # Further Reading
