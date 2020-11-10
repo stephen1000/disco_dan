@@ -39,7 +39,6 @@ async def search(q, max_results=5, order="relevance", start_at="0s", use_cache=T
     result = YoutubeResult(q, video_id, start_at=start_at)
 
     if use_cache and video_id:
-        asyncio.create_task(cache.add_result)
         await cache.add_result(video_id, q, result.url)
 
     return result
