@@ -3,13 +3,16 @@ import argparse
 
 from disco_dan import bot
 from disco_dan.cache.models import create_objects
+from disco_dan.cache.search_cache import SearchCache
 
 
 def get_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser()
     parser.add_argument('command', help="""Command to run- one of:
     run: start the disco_dan bot
-    initdb: initialize the cacheing database (uses environment variable DISCO_DAN_CONNECTION_STRING)""", choices=['run', 'initdb'])
+    initdb: initialize the cacheing database (uses environment variable DISCO_DAN_CONNECTION_STRING)
+    flush: empties the cache
+    """, choices=['run', 'initdb', 'flush'])
     return parser
 
 
@@ -22,7 +25,7 @@ def handle():
     if args.command == 'initdb':
         create_objects()
     if args.command == 'flush':
-        pass
+        SearchCache().flush()
 
 
 if __name__ == '__main__':

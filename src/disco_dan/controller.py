@@ -150,7 +150,7 @@ class Controller(object):
         if voice_connection.is_playing:
             await self.stop(guild)
 
-        audio = await youtube.load_audio(query)
+        audio = await youtube.load_audio(query, use_search_cache=settings.USE_SEARCH_CACHE)
         audio_path = audio.download(
             output_path=settings.AUDIO_BUFFER_PATH,
             filename=settings.AUDIO_BUFFER_NAME,

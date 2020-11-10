@@ -19,5 +19,8 @@ class YoutubeQuery(Base):
         return f"<YoutubeQuery(query_id={self.query_id}, youtube_id={self.youtube_id}, query_text={self.query_text})>"
 
 
-def create_objects():
-    Base.metadata.create_all(engine)
+def create_objects(db_engine=None):
+    if db_engine is None:
+        Base.metadata.create_all(engine)
+    else:
+        Base.metadata.create_all(db_engine)
