@@ -1,15 +1,23 @@
 """ Ensure `disco_dan.cache.cache` behaves properly """
 
 import pytest
-from disco_dan import db, youtube
+from disco_dan import db, settings, youtube
 from disco_dan.cache import SearchCache
-from disco_dan.cache.models import YoutubeQuery
+from disco_dan.cache.models import YoutubeQuery, create_objects
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
 
 @pytest.fixture
 async def cache():
     """ A search cache for testing """
-    return SearchCache()
+    engine = create_engine(settings.TEST_CONNECTION_STRING)
+    create_objects(engine)
+    Session = sessionmaker()
+    Session.configure(bind=engine)
+    cache = SearchCache(Session=Session)
+    await cache.async_flush()
+    return cache
 
 
 @pytest.mark.asyncio
@@ -26,8 +34,8 @@ async def test_check_text_hit(cache, known_video):
 @pytest.mark.asyncio
 async def test_check_text_miss(cache, known_video):
     """ Assert that check_text retrieves a value """
-    miss = await cache.check_text(known_video)
-    assert miss.query_text == known_video
+    miss = await cache.check_text(known_video + ' aww now im gonna miss :(')
+    assert miss is None
 
 
 @pytest.mark.asyncio

@@ -7,33 +7,20 @@ from googleapiclient.errors import HttpError
 from pytube import YouTube
 
 from disco_dan import settings, exceptions
+from disco_dan.cache import SearchCache
+from disco_dan.models import YoutubeResult
+
+cache = SearchCache()
 
 
-class YoutubeResult(object):
-    """ A video id and matching url """
-
-    def __init__(self, query_text: str, youtube_id: str, start_at: str = "0s"):
-        self.query_text = query_text
-        self.youtube_id = youtube_id
-        self.start_at = start_at
-
-    @property
-    def url(self):
-        return f"https://www.youtube.com/watch?v={self.youtube_id}"
-
-    def __str__(self):
-        return self.url
-
-    def __bool__(self):
-        return self.youtube_id is not None
-
-    def __repr__(self):
-        return f"<YoutubeResult({self.query_text}, {self.youtube_id}, {self.start_at})>"
-
-
-async def search(q, max_results=5, order="relevance", start_at="0s"):
+async def search(q, max_results=5, order="relevance", start_at="0s", use_cache=True):
     """ Search youtube for `q` & return first url by `order`, staring at time `start_at` """
     # pylint: disable=no-member
+
+    if use_cache:
+        hit = await cache.check_text(q)
+        if hit:
+            return YoutubeResult(hit.query_text, hit.youtube_id,)
 
     youtube = build(
         settings.YOUTUBE_API_SERVICE_NAME,
@@ -50,6 +37,11 @@ async def search(q, max_results=5, order="relevance", start_at="0s"):
         video_id = None
 
     result = YoutubeResult(q, video_id, start_at=start_at)
+
+    if use_cache and video_id:
+        asyncio.create_task(cache.add_result)
+        await cache.add_result(video_id, q, result.url)
+
     return result
 
 
@@ -61,9 +53,11 @@ async def get_audio(youtube_url: str, audio_format="mp4") -> None:
     return audio
 
 
-async def load_audio(q):
+async def load_audio(q, use_search_cache=None):
+    if use_search_cache is None:
+        use_search_cache = settings.USE_SEARCH_CACHE
     try:
-        result = await search(q)
+        result = await search(q, use_cache=True)
         audio = await get_audio(result.url)
     except KeyError as e:
         raise exceptions.YoutubeError(
