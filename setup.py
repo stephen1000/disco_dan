@@ -29,6 +29,7 @@ setuptools.setup(
         "pytubeX==0.1.2",
         "PyNaCl==1.4.0",
         "SQLAlchemy==1.3.19",
+        "docker==4.3.1",
     ],
     extras_require={"dev": test_req + dev_req, "test": test_req,},
     classifiers=[
