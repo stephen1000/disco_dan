@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 # Initiates the discord bot
 
 disco_dan initdb

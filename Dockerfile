@@ -1,3 +1,4 @@
+# BUILD: docker build -t disco-dan:latest --rm .
 FROM python:3.9
 
 VOLUME /disco_dan
@@ -18,6 +19,9 @@ ENV AUDIO_BUFFER_PATH /disco_dan/buffer
 ENV DISCORD_TOKEN ${DISCORD_TOKEN}
 ENV DISCORD_GUILD ${DISCORD_GUILD}
 
+VOLUME [ "/sqlite" ]
+
 WORKDIR /disco_dan
+RUN chmod -R +x /disco_dan/scripts
 
 ENTRYPOINT [ "/disco_dan/scripts/start.sh" ]
