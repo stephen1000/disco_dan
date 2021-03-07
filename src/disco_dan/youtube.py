@@ -65,4 +65,3 @@ async def load_audio(q, use_search_cache=None):
             str(e) + ",".join(str(arg) for arg in e.args),
         )
     return audio
-

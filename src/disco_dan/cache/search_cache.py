@@ -7,6 +7,7 @@ from disco_dan.cache.models import YoutubeQuery
 
 class SearchCache(object):
     """ A cache of search results """
+
     # pylint: disable=no-member
 
     def __init__(self, duration: dt.timedelta = dt.timedelta(days=90), Session=None):
@@ -33,7 +34,9 @@ class SearchCache(object):
         # failed and didn't find any matches
         return None
 
-    async def add_result(self, youtube_id: str, query_text: str, url: str) -> YoutubeQuery:
+    async def add_result(
+        self, youtube_id: str, query_text: str, url: str
+    ) -> YoutubeQuery:
         """ Add a new cache entry for `query_text` """
         session = self.Session()
         entry = YoutubeQuery(

@@ -76,8 +76,15 @@ class Controller(object):
                 if message.author.voice:
                     voice_channel = message.author.voice.channel.name
                 else:
-                    raise exceptions.VoiceNotChannelFound("No voice channel was specified, and the requestor is not in a voice channel.")
-            await self.play(guild=message.guild, query=query,text_channel=message.channel, voice_channel_name=voice_channel)
+                    raise exceptions.VoiceNotChannelFound(
+                        "No voice channel was specified, and the requestor is not in a voice channel."
+                    )
+            await self.play(
+                guild=message.guild,
+                query=query,
+                text_channel=message.channel,
+                voice_channel_name=voice_channel,
+            )
 
         elif args.command == "pause":
             await message.channel.send(
@@ -141,13 +148,19 @@ class Controller(object):
         return connection
 
     async def play(
-        self, guild: discord.Guild, query: str, text_channel:discord.TextChannel, voice_channel_name: Optional[str] = None
+        self,
+        guild: discord.Guild,
+        query: str,
+        text_channel: discord.TextChannel,
+        voice_channel_name: Optional[str] = None,
     ):
         voice_connection = await self.get_voice_connection(
             guild, create_in_channel=voice_channel_name
         )
 
-        audio = await youtube.load_audio(query, use_search_cache=settings.USE_SEARCH_CACHE)
+        audio = await youtube.load_audio(
+            query, use_search_cache=settings.USE_SEARCH_CACHE
+        )
         audio_path = audio.download(
             output_path=settings.AUDIO_BUFFER_PATH,
             filename=settings.AUDIO_BUFFER_NAME,
@@ -189,4 +202,3 @@ class Controller(object):
         error_text = traceback.format_exc()
         logger.info(error_text)
         await channel.send(f"I ran into an error: \n{type(error).__name__}: {error}")
-
