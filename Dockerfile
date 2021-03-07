@@ -20,4 +20,4 @@ ENV DISCORD_GUILD ${DISCORD_GUILD}
 
 WORKDIR /disco_dan
 
-CMD [ "scripts/start.sh" ]
+ENTRYPOINT [ "/disco_dan/scripts/start.sh" ]
