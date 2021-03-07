@@ -6,11 +6,11 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-AUDIO_BUFFER_PATH = os.getenv("AUDIO_BUFFER_PATH")
-AUDIO_BUFFER_NAME = os.getenv("AUDIO_BUFFER_NAME")
+AUDIO_BUFFER_PATH = os.getenv("AUDIO_BUFFER_PATH", 'buffer')
+AUDIO_BUFFER_NAME = os.getenv("AUDIO_BUFFER_NAME", 'now_playing.mp4')
 FFMPEG_EXECUTABLE = os.getenv("FFMPEG_EXECUTABLE")
 
-DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
+DISCORD_TOKEN = os.getenv("DISCORD_TOKEN", '')
 DISCORD_GUILD = os.getenv("DISCORD_GUILD")
 DISCORD_TEST_GUILD = os.getenv("DISCORD_TEST_GUILD", DISCORD_GUILD)
 

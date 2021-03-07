@@ -69,7 +69,7 @@ class Controller(object):
         if args.command == "play":
             query = " ".join(str(x) for x in args.query)
             await message.channel.send(
-                f'Playing "{query}" (requested by {message.author.mention})!'
+                f'Searching YouTube for "{query}" (requested by {message.author.mention})...'
             )
             voice_channel = args.channel
             if voice_channel is None:
@@ -77,7 +77,7 @@ class Controller(object):
                     voice_channel = message.author.voice.channel.name
                 else:
                     raise exceptions.VoiceNotChannelFound("No voice channel was specified, and the requestor is not in a voice channel.")
-            await self.play(guild=message.guild, query=query, channel_name=voice_channel)
+            await self.play(guild=message.guild, query=query,text_channel=message.channel, voice_channel_name=voice_channel)
 
         elif args.command == "pause":
             await message.channel.send(
@@ -141,14 +141,11 @@ class Controller(object):
         return connection
 
     async def play(
-        self, guild: discord.Guild, query: str, channel_name: Optional[str] = None
+        self, guild: discord.Guild, query: str, text_channel:discord.TextChannel, voice_channel_name: Optional[str] = None
     ):
         voice_connection = await self.get_voice_connection(
-            guild, create_in_channel=channel_name
+            guild, create_in_channel=voice_channel_name
         )
-
-        if voice_connection.is_playing:
-            await self.stop(guild)
 
         audio = await youtube.load_audio(query, use_search_cache=settings.USE_SEARCH_CACHE)
         audio_path = audio.download(
@@ -156,6 +153,10 @@ class Controller(object):
             filename=settings.AUDIO_BUFFER_NAME,
             skip_existing=False,
         )
+
+        await text_channel.send(f'... found "{query}"-- playing now 🎵')
+        if voice_connection.is_playing:
+            await self.stop(guild)
 
         player = discord.FFmpegPCMAudio(
             executable=settings.FFMPEG_EXECUTABLE, source=audio_path
