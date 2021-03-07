@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
-# Initiates the discord bot
 
+# Creates necessary tables in specified db
 disco_dan initdb
+
+# Initiates the discord bot
 disco_dan start
