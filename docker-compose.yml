@@ -1,0 +1,17 @@
+version: "3.8"
+
+
+services:
+  disco_dan:
+    image: disco_dan:latest
+    restart: unless-stopped
+    volumes:
+      - sqlite
+    env_file: .env
+    # environment: 
+    #   KEY: val
+
+
+volumes:
+  sqlite:
+    name: sqlite

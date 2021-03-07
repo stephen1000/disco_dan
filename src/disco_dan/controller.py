@@ -7,7 +7,7 @@ from typing import Optional
 
 import discord
 
-from disco_dan import containers, exceptions, logger, settings, youtube
+from disco_dan import exceptions, settings, youtube, logger
 
 
 class Controller(object):
@@ -52,15 +52,6 @@ class Controller(object):
         resume_parser = subparsers.add_parser("resume", help="Resume playing video")
         resume_parser.set_defaults(command="resume")
 
-        exec_parser = subparsers.add_parser("exec", help="Execute command")
-        exec_parser.add_argument(
-            "container_name", type=str, help="Name of container to exec command on"
-        )
-        exec_parser.add_argument(
-            "cmd", type=str, nargs=argparse.REMAINDER, help="Command to execute"
-        )
-        exec_parser.set_defaults(command="exec")
-
         return parser
 
     async def handle_message(self, message: discord.Message) -> None:
@@ -78,7 +69,7 @@ class Controller(object):
         if args.command == "play":
             query = " ".join(str(x) for x in args.query)
             await message.channel.send(
-                f'Playing "{query}" (requested by {message.author.mention})!'
+                f'Searching YouTube for "{query}" (requested by {message.author.mention})...'
             )
             voice_channel = args.channel
             if voice_channel is None:
@@ -89,7 +80,10 @@ class Controller(object):
                         "No voice channel was specified, and the requestor is not in a voice channel."
                     )
             await self.play(
-                guild=message.guild, query=query, channel_name=voice_channel
+                guild=message.guild,
+                query=query,
+                text_channel=message.channel,
+                voice_channel_name=voice_channel,
             )
 
         elif args.command == "pause":
@@ -109,19 +103,6 @@ class Controller(object):
                 f"Stopping playback (requested by {message.author.mention})..."
             )
             await self.stop(guild=message.guild)
-
-        elif args.command == "exec":
-            cmd = " ".join(args.cmd)
-            await message.channel.send(
-                f"Asking '{args.container_name}' to execute '{cmd}'."
-            )
-            if str(message.author.id) == "150421876663910401":
-                response = await containers.exec_command(args.container_name, cmd)
-                if response:
-                    await message.channel.send(response)
-            else:
-                await message.channel.send("You're not my supervisor!")
-                print(message.author.id)
 
     async def get_bot_command_text(self, message: str) -> Optional[str]:
         """ `True` if message is speaking to Disco Dan """
@@ -167,14 +148,15 @@ class Controller(object):
         return connection
 
     async def play(
-        self, guild: discord.Guild, query: str, channel_name: Optional[str] = None
+        self,
+        guild: discord.Guild,
+        query: str,
+        text_channel: discord.TextChannel,
+        voice_channel_name: Optional[str] = None,
     ):
         voice_connection = await self.get_voice_connection(
-            guild, create_in_channel=channel_name
+            guild, create_in_channel=voice_channel_name
         )
-
-        if voice_connection.is_playing:
-            await self.stop(guild)
 
         audio = await youtube.load_audio(
             query, use_search_cache=settings.USE_SEARCH_CACHE
@@ -184,6 +166,10 @@ class Controller(object):
             filename=settings.AUDIO_BUFFER_NAME,
             skip_existing=False,
         )
+
+        await text_channel.send(f'... found "{query}"-- playing now 🎵')
+        if voice_connection.is_playing:
+            await self.stop(guild)
 
         player = discord.FFmpegPCMAudio(
             executable=settings.FFMPEG_EXECUTABLE, source=audio_path
@@ -216,4 +202,3 @@ class Controller(object):
         error_text = traceback.format_exc()
         logger.info(error_text)
         await channel.send(f"I ran into an error: \n{type(error).__name__}: {error}")
-

@@ -11,4 +11,3 @@ if settings.USE_SEARCH_CACHE:
     Session.configure(bind=engine)
 else:
     engine, Session = None, None
-

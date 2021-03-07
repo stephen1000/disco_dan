@@ -2,4 +2,4 @@
 
 import logging
 
-logger = logging.getLogger('disco_dan')
+logger = logging.getLogger("disco_dan")
