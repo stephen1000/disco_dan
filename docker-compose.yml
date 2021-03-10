@@ -6,12 +6,15 @@ services:
     image: disco_dan:latest
     restart: unless-stopped
     volumes:
-      - sqlite
+      - type: volume
+        source: sqlite
+        target: /sqlite
     env_file: .env
-    # environment: 
-    #   KEY: val
-
+    environment: 
+      FFMPEG_EXECUTABLE: /usr/bin/ffmpeg
+      DISCO_DAN_CONNECTION_STRING: "sqlite:////sqlite/disco_dan/db.sqlite3"
+      TEST_CONNECTION_STRING: "sqlite:////sqlite/disco_dan/test_db.sqlite3"
+      AUDIO_BUFFER_PATH: /tmp/disco_dan/
 
 volumes:
   sqlite:
-    name: sqlite

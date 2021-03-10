@@ -19,7 +19,8 @@ ENV AUDIO_BUFFER_PATH /disco_dan/buffer
 ENV DISCORD_TOKEN ${DISCORD_TOKEN}
 ENV DISCORD_GUILD ${DISCORD_GUILD}
 
-VOLUME [ "/sqlite" ]
+VOLUME [ "sqlite" ]
+RUN mkdir -p /sqlite/disco_dan
 
 WORKDIR /disco_dan
 RUN chmod -R +x /disco_dan/scripts
