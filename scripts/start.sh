@@ -4,4 +4,4 @@
 disco_dan initdb
 
 # Initiates the discord bot
-disco_dan start
+disco_dan run
