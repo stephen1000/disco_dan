@@ -1,4 +1,4 @@
-# BUILD: docker build -t disco-dan:latest --rm .
+# BUILD: docker build -t disco_dan:latest --rm .
 FROM python:3.9
 
 VOLUME /disco_dan
