@@ -12,7 +12,6 @@ services:
       FFMPEG_EXECUTABLE: /usr/bin/ffmpeg
       DISCO_DAN_CONNECTION_STRING: postgresql://disco_dan:sooper@db:5432/disco_dan
       TEST_CONNECTION_STRING: postgresql://disco_dan:sooper@db:5432/disco_dan_test
-      AUDIO_BUFFER_PATH: /tmp/disco_dan/
     depends_on:
       - "db"
   db:
