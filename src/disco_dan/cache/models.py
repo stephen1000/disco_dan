@@ -3,14 +3,11 @@ import logging
 from time import sleep
 
 from disco_dan.db import engine
+from disco_dan.loggers import logger
 from sqlalchemy import Column, DateTime, Integer, Sequence, String
 from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
-
-
-logger = logging.getLogger("disco_dan")
-
 
 class YoutubeQuery(Base):
     __tablename__ = "youtube_query"
@@ -28,8 +25,9 @@ class YoutubeQuery(Base):
 def create_objects(db_engine=None):
     # Allow DB to initialize w/in compose (yeah this is hacky but also super easy)
     sleep(15)
+    from disco_dan import settings
+    logger.info("Creating tables for all models... %s", settings.DISCO_DAN_CONNECTION_STRING)
     if db_engine is None:
         Base.metadata.create_all(engine)
     else:
-        logger.info("Creating tables for all models...")
         Base.metadata.create_all(db_engine)
