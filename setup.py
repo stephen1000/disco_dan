@@ -10,6 +10,8 @@ dev_req = [
 
 test_req = ["pytest==5.4.3", "pytest-asyncio==0.14.0", "pytest-cov==2.10.1"]
 
+pg_req = ["psycopg2-binary==2.8.6"]
+
 setuptools.setup(
     name="disco_dan",
     version="0.0.2",
@@ -31,7 +33,7 @@ setuptools.setup(
         "SQLAlchemy==1.3.19",
         "docker==4.3.1",
     ],
-    extras_require={"dev": test_req + dev_req, "test": test_req,},
+    extras_require={"dev": test_req + dev_req, "test": test_req, "postgres": pg_req},
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",

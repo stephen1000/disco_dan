@@ -12,7 +12,7 @@ RUN apt-get install -y \
 
 ADD --chown=${USER_ID}:${USER_ID} . /disco_dan
 
-RUN pip3 install /disco_dan
+RUN pip3 install /disco_dan[postgres]
 RUN mkdir /disco_dan/buffer
 
 ENV AUDIO_BUFFER_PATH /disco_dan/buffer

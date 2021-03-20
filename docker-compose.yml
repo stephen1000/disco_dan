@@ -1,20 +1,24 @@
 version: "3.8"
 
-
 services:
-  disco_dan:
+  bot:
     image: disco_dan:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
     restart: unless-stopped
-    volumes:
-      - type: volume
-        source: sqlite
-        target: /sqlite
     env_file: .env
-    environment: 
+    environment:
       FFMPEG_EXECUTABLE: /usr/bin/ffmpeg
-      DISCO_DAN_CONNECTION_STRING: "sqlite:////sqlite/disco_dan/db.sqlite3"
-      TEST_CONNECTION_STRING: "sqlite:////sqlite/disco_dan/test_db.sqlite3"
+      DISCO_DAN_CONNECTION_STRING: postgresql://disco_dan:sooper@db:5432/disco_dan
+      TEST_CONNECTION_STRING: postgresql://disco_dan:sooper@db:5432/disco_dan_test
       AUDIO_BUFFER_PATH: /tmp/disco_dan/
-
-volumes:
-  sqlite:
+    depends_on:
+      - "db"
+  db:
+    image: postgres:13-alpine
+    env_file: .env
+    environment:
+      POSTGRES_DB: disco_dan
+      POSTGRES_USER: disco_dan
+      POSTGRES_PASSWORD: sooper

@@ -1,9 +1,14 @@
 """ Database models for the cache """
+import logging
+
 from disco_dan.db import engine
-from sqlalchemy import Column, Integer, Sequence, String, DateTime
+from sqlalchemy import Column, DateTime, Integer, Sequence, String
 from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
+
+
+logger = logging.getLogger("disco_dan")
 
 
 class YoutubeQuery(Base):
@@ -23,4 +28,5 @@ def create_objects(db_engine=None):
     if db_engine is None:
         Base.metadata.create_all(engine)
     else:
+        logger.info("Creating tables for all models...")
         Base.metadata.create_all(db_engine)
