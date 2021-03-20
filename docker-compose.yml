@@ -10,8 +10,6 @@ services:
     env_file: .env
     environment:
       FFMPEG_EXECUTABLE: /usr/bin/ffmpeg
-      DISCO_DAN_CONNECTION_STRING: postgresql://disco_dan:sooper@db:5432/disco_dan
-      TEST_CONNECTION_STRING: postgresql://disco_dan:sooper@db:5432/disco_dan_test
     depends_on:
       - "db"
   db:
@@ -20,4 +18,9 @@ services:
     environment:
       POSTGRES_DB: disco_dan
       POSTGRES_USER: disco_dan
-      POSTGRES_PASSWORD: sooper
+
+secrets:
+  disco_dan_conn_str:
+    file: tmp/disco_dan_conn_str
+  test_conn_str:
+    file: tmp/test_conn_str
