@@ -10,8 +10,13 @@ services:
     env_file: .env
     environment:
       FFMPEG_EXECUTABLE: /usr/bin/ffmpeg
+      AUDIO_BUFFER_PATH: /tmp
+      AUDIO_BUFFER_NAME: now_playing
     depends_on:
       - "db"
+    secrets:
+      - disco_dan_conn_str
+      - test_conn_str
   db:
     image: postgres:13-alpine
     env_file: .env
