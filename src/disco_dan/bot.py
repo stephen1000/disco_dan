@@ -4,6 +4,7 @@ import re
 import discord
 
 from disco_dan import settings, controller, exceptions
+from disco_dan.loggers import logger
 
 client = discord.Client()
 controller = controller.Controller(client)
@@ -12,7 +13,7 @@ controller = controller.Controller(client)
 @client.event
 async def on_ready():
     """ Announce yourself """
-    print("Disco Dan is here!")
+    logger.info("Disco Dan is here!")
 
 
 @client.event

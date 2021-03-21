@@ -1,5 +1,6 @@
 """ Disco Dan's Brain """
 import argparse
+import re
 import sys
 import traceback
 from io import BytesIO
@@ -7,13 +8,14 @@ from typing import Optional
 
 import discord
 
-from disco_dan import exceptions, settings, youtube, logger
+from disco_dan import exceptions, logger, settings, youtube
 
 
 class Controller(object):
     """ Bot controller """
 
     START_WORD = "disco dan"
+    VOLUME = ".03"
 
     def __init__(self, client: discord.Client):
         self.client = client
@@ -46,6 +48,12 @@ class Controller(object):
         )
         pause_parser.set_defaults(command="pause")
 
+        volume_parser = subparsers.add_parser(
+            "volume", help="Sets disco dan's volume for this server."
+        )
+        volume_parser.add_argument('volume', type=str, help="% Volume (e.g. 15 for 15%)")
+        volume_parser.set_defaults(command="volume")
+
         stop_parser = subparsers.add_parser("stop", help="Stop playing videos")
         stop_parser.set_defaults(command="stop")
 
@@ -69,7 +77,7 @@ class Controller(object):
         if args.command == "play":
             query = " ".join(str(x) for x in args.query)
             await message.channel.send(
-                f'Searching YouTube for "{query}" (requested by {message.author.mention})...'
+                f':mag: Searching YouTube for "{query}" (requested by {message.author.mention})...'
             )
             voice_channel = args.channel
             if voice_channel is None:
@@ -77,7 +85,7 @@ class Controller(object):
                     voice_channel = message.author.voice.channel.name
                 else:
                     raise exceptions.VoiceNotChannelFound(
-                        "No voice channel was specified, and the requestor is not in a voice channel."
+                        ":frog: No voice channel was specified, and the requestor is not in a voice channel."
                     )
             await self.play(
                 guild=message.guild,
@@ -86,21 +94,27 @@ class Controller(object):
                 voice_channel_name=voice_channel,
             )
 
+        elif args.command == 'volume':
+            volume = await self.volume(args.volume)
+            await message.channel.send(
+                f":speaker: Volume set to {volume*100}% (requested by {message.author.mention})..!"
+            )
+
         elif args.command == "pause":
             await message.channel.send(
-                f"Pausing playback (requested by {message.author.mention})..."
+                f":pause_button: Pausing playback (requested by {message.author.mention})..."
             )
             await self.pause(guild=message.guild)
 
         elif args.command == "resume":
             await message.channel.send(
-                f"Resuming playback (requested by {message.author.mention})..."
+                f":musical_note: Resuming playback (requested by {message.author.mention})..."
             )
             await self.resume(guild=message.guild)
 
         elif args.command == "stop":
             await message.channel.send(
-                f"Stopping playback (requested by {message.author.mention})..."
+                f":stop_button: Stopping playback (requested by {message.author.mention})..."
             )
             await self.stop(guild=message.guild)
 
@@ -137,7 +151,7 @@ class Controller(object):
 
     async def get_voice_connection(
         self, guild: discord.Guild, create_in_channel: Optional[str] = None
-    ):
+    ) -> discord.voice_client:
         """ Return the current bot voice connection for `guild`. """
         connection = guild.voice_client
 
@@ -154,6 +168,7 @@ class Controller(object):
         text_channel: discord.TextChannel,
         voice_channel_name: Optional[str] = None,
     ):
+        """ Plays media specified in ``query`` in ``guild`` """
         voice_connection = await self.get_voice_connection(
             guild, create_in_channel=voice_channel_name
         )
@@ -172,9 +187,19 @@ class Controller(object):
             await self.stop(guild)
 
         player = discord.FFmpegPCMAudio(
-            executable=settings.FFMPEG_EXECUTABLE, source=audio_path
+            executable=settings.FFMPEG_EXECUTABLE, source=audio_path, options=f'-filter:a "volume={self.VOLUME}"'
         )
         return voice_connection.play(player)
+
+    async def volume(self, volume_str:str):
+        """ Sets media player volume for a guild """
+        volume = re.match(r'(\d*\.?\d*)%?', volume_str)
+        if volume and len(volume.groups()) == 1:
+            volume = float(volume.group(1)) / 100
+            volume = f'{volume:1.4d}'
+            self.VOLUME = volume
+            return volume
+        raise exceptions.MessageParsingErrror('Invalid volume string- "%s"', volume_str)
 
     async def resume(self, guild: discord.Guild):
         """ Resume audio playback """
@@ -201,4 +226,4 @@ class Controller(object):
         await self.stop(channel.guild)
         error_text = traceback.format_exc()
         logger.info(error_text)
-        await channel.send(f"I ran into an error: \n{type(error).__name__}: {error}")
+        await channel.send(f":frowning2: I ran into an error: \n{type(error).__name__}: {error}")

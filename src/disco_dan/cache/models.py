@@ -25,8 +25,7 @@ class YoutubeQuery(Base):
 def create_objects(db_engine=None):
     # Allow DB to initialize w/in compose (yeah this is hacky but also super easy)
     sleep(15)
-    from disco_dan import settings
-    logger.info("Creating tables for all models... %s", settings.DISCO_DAN_CONNECTION_STRING)
+    logger.info("Creating tables for all models...",)
     if db_engine is None:
         Base.metadata.create_all(engine)
     else:
