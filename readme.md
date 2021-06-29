@@ -48,8 +48,8 @@ python src/disco_dan/bot.py
 System specific instructions can be found online for running python processes in the background and/or as a service.
 
 # Roadmap
+- Documentation
 - Logging
-- Containerization
 
 # Further Reading
 See docstrings for documentation (full documentation pending)
