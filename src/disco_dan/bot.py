@@ -17,8 +17,17 @@ async def on_ready():
 
 
 @client.event
-async def on_message(message):
-    """ Respond to a message """
+async def on_message(message: discord.message.Message):
+    """ Respond to a message 
+    
+    :param message: A discord message object to respond to
+    :type message: discord.message.Message
+
+    :raises: exceptions.DiscoDanError: Something went wrong with Disco Dan D:
+
+    :return: None
+    :rtype: None
+    """
     try:
         await controller.handle_message(message)
     except exceptions.DiscoDanError as e:

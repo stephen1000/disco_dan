@@ -151,7 +151,7 @@ class Controller(object):
 
     async def get_voice_connection(
         self, guild: discord.Guild, create_in_channel: Optional[str] = None
-    ) -> discord.voice_client:
+    ) -> discord.voice_client.VoiceClient:
         """ Return the current bot voice connection for `guild`. """
         connection = guild.voice_client
 
